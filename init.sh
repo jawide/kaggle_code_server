@@ -5,3 +5,6 @@ sudo apt update >/dev/null
 sudo apt install ngrok >/dev/null
 echo "install code-server..."
 curl -fsSL https://code-server.dev/install.sh | sh >/dev/null
+# Automatically import environment variables after starting the terminal
+env > /root/.env
+echo "source /root/env.sh" >> /root/.bashrc

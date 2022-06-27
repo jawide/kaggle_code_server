@@ -10,12 +10,21 @@ if __name__ == "__main__":
     parser.add_argument(dest="token", help="your ngrok authtoken. see https://dashboard.ngrok.com/get-started/your-authtoken")
     parser.add_argument(dest="password", help="your code-server password. example: 123456")
     args = parser.parse_args()
+
+    # Export environment variables to shell scripts
+    with open("/root/env.sh", "w") as file:
+        with open("/root/.env", "r") as env:
+            for line in env:
+                i = line.find("=")
+                file.write('export {}="{}"\n'.format(line[:i], line[i+1:].strip()))
+
     print("authorize ngrok token...")
     subprocess.Popen(shlex.split(f"ngrok authtoken {args.token}")).wait()
     print("starting ngrok...")
     ngrok_process = subprocess.Popen(shlex.split("ngrok http 8080 --log stdout"))
     print("starting code-server...")
     code_server_process = subprocess.Popen(shlex.split("code-server"), env={"PASSWORD": args.password})
+
     try:
         while True:
             time.sleep(1)
